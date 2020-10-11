@@ -1,9 +1,8 @@
 package ru.aizen.mtg.scryfall.api.client.query;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import ru.aizen.mtg.scryfall.api.client.ScryfallClient;
@@ -25,18 +24,16 @@ public class ScryfallRequest<T> {
 
 	public T execute() throws ScryfallRequestException {
 		try {
-			Gson gson = new Gson();
-			return gson.fromJson(responseEntityAsString(), type);
-		} catch (JsonSyntaxException e) {
+			return client.getObjectMapper().readValue(responseEntityAsString(), type);
+		} catch (JsonProcessingException e) {
 			throw new ScryfallRequestException(e);
 		}
 	}
 
 	public String responseEntityAsString() throws ScryfallRequestException {
-		HttpGet request = new HttpGet(uri);
-
-		try (CloseableHttpResponse response = client.getHttpClient().execute(request)) {
-
+		try {
+			HttpGet request = new HttpGet(uri);
+			HttpResponse response = client.getTransportClient().execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != 200) {
 				throw new ScryfallRequestException("Internal API server error. Wrong status code: " + statusCode + ".");

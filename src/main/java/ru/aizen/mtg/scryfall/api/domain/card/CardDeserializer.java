@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import ru.aizen.mtg.scryfall.api.domain.ArrayJsonNode;
-import ru.aizen.mtg.scryfall.api.domain.NullableJsonNode;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static ru.aizen.mtg.scryfall.api.parser.JsonNodeUtil.*;
 
 public class CardDeserializer extends StdDeserializer<Card> {
 
@@ -41,45 +41,45 @@ public class CardDeserializer extends StdDeserializer<Card> {
 	}
 
 	private void parseCoreFieldsToCard(Card card, JsonNode node) {
-		card.setArenaId(new NullableJsonNode<>(Integer.class).parse(node, "arena_id"));
-		card.setId(UUID.fromString(node.get("id").asText()));
-		card.setLang(new NullableJsonNode<>(String.class).parse(node, "lang"));
-		card.setMtgoId(new NullableJsonNode<>(Integer.class).parse(node, "mtgo_id"));
-		card.setMtgoFoilId(new NullableJsonNode<>(Integer.class).parse(node, "mtgo_foil_id"));
-		card.setMultiverseIds(new ArrayJsonNode<>(Integer.class).parse(node, "multiverse_ids", JsonNode::asInt));
-		card.setTcgplayerId(new NullableJsonNode<>(Integer.class).parse(node, "tcgplayer_id"));
-		card.setCardmarketId(new NullableJsonNode<>(Integer.class).parse(node, "cardmarket_id"));
-		card.setOracleId(UUID.fromString(node.get("oracle_id").asText()));
-		card.setPrintsSearchUri((parseURI(node.get("prints_search_uri").asText())));
-		card.setRulingsUri((parseURI(node.get("rulings_uri").asText())));
-		card.setScryfallUri((parseURI(node.get("scryfall_uri").asText())));
-		card.setUri((parseURI(node.get("uri").asText())));
+		card.setArenaId(parseSimpleNode(node, "arena_id", Integer.class));
+		card.setId(parseUUID(node, "id"));
+		card.setLang(parseSimpleNode(node, "lang", String.class));
+		card.setMtgoId(parseSimpleNode(node, "mtgo_id", Integer.class));
+		card.setMtgoFoilId(parseSimpleNode(node, "mtgo_foil_id", Integer.class));
+		card.setMultiverseIds(parseArrayNode(node, "multiverse_ids", Integer.class, JsonNode::asInt));
+		card.setTcgplayerId(parseSimpleNode(node, "tcgplayer_id", Integer.class));
+		card.setCardmarketId(parseSimpleNode(node, "cardmarket_id", Integer.class));
+		card.setOracleId(parseUUID(node, "oracle_id"));
+		card.setPrintsSearchUri((parseURI(node, "prints_search_uri")));
+		card.setRulingsUri((parseURI(node, "rulings_uri")));
+		card.setScryfallUri((parseURI(node, "scryfall_uri")));
+		card.setUri((parseURI(node, "uri")));
 	}
 
 	private void parseGameplayFieldsToCard(Card card, JsonNode node) {
-		card.setAllParts(new ArrayJsonNode<>(RelatedCard.class).parse(node, "all_parts", this::parseRelatedCard));
-		card.setCardFaces(new ArrayJsonNode<>(CardFace.class).parse(node, "card_faces", this::parseCardFace));
+		card.setAllParts(parseArrayNode(node, "all_parts", RelatedCard.class, this::parseRelatedCard));
+		card.setCardFaces(parseArrayNode(node, "card_faces", CardFace.class, this::parseCardFace));
 		card.setCmc(node.get("cmc").asInt());
-		card.setColorIdentity(new ArrayJsonNode<>(Color.class).parse(node, "color_identity", n -> Color.from(n.asText())));
-		card.setColorIndicator(new ArrayJsonNode<>(Color.class).parse(node, "color_indicator", n -> Color.from(n.asText())));
-		card.setColors(new ArrayJsonNode<>(Color.class).parse(node, "colors", n -> Color.from(n.asText())));
-		card.setEdhrecRank(new NullableJsonNode<>(Integer.class).parse(node, "edhrec_rank"));
+		card.setColorIdentity(parseArrayNode(node, "color_identity", Color.class, n -> Color.from(n.asText())));
+		card.setColorIndicator(parseArrayNode(node, "color_indicator", Color.class, n -> Color.from(n.asText())));
+		card.setColors(parseArrayNode(node, "colors", Color.class, n -> Color.from(n.asText())));
+		card.setEdhrecRank(parseSimpleNode(node, "edhrec_rank", Integer.class));
 		card.setFoil(node.get("foil").asBoolean());
-		card.setHandModifier(new NullableJsonNode<>(String.class).parse(node, "hand_modifier"));
-		card.setKeywords(new ArrayJsonNode<>(String.class).parse(node, "keywords", JsonNode::textValue));
+		card.setHandModifier(parseSimpleNode(node, "hand_modifier", String.class));
+		card.setKeywords(parseArrayNode(node, "keywords", String.class, JsonNode::textValue));
 		card.setLayout(node.get("layout").asText());
 		card.setLegalities(parseLegalities(node.get("legalities")));
-		card.setLifeModifier(new NullableJsonNode<>(String.class).parse(node, "life_modifier"));
-		card.setLoyalty(new NullableJsonNode<>(String.class).parse(node, "loyalty"));
-		card.setManaCost(new NullableJsonNode<>(String.class).parse(node, "mana_cost"));
+		card.setLifeModifier(parseSimpleNode(node, "life_modifier", String.class));
+		card.setLoyalty(parseSimpleNode(node, "loyalty", String.class));
+		card.setManaCost(parseSimpleNode(node, "mana_cost", String.class));
 		card.setName(node.get("name").asText());
 		card.setNonfoil(node.get("nonfoil").asBoolean());
-		card.setOracleText(new NullableJsonNode<>(String.class).parse(node, "oracle_text"));
+		card.setOracleText(parseSimpleNode(node, "oracle_text", String.class));
 		card.setOversized(node.get("oversized").asBoolean());
-		card.setPower(new NullableJsonNode<>(String.class).parse(node, "power"));
-		card.setProducedMana(new ArrayJsonNode<>(Color.class).parse(node, "produced_mana", n -> Color.from(n.asText())));
+		card.setPower(parseSimpleNode(node, "power", String.class));
+		card.setProducedMana(parseArrayNode(node, "produced_mana", Color.class, n -> Color.from(n.asText())));
 		card.setReserved(node.get("reserved").asBoolean());
-		card.setToughness(new NullableJsonNode<>(String.class).parse(node, "toughness"));
+		card.setToughness(parseSimpleNode(node, "toughness", String.class));
 		card.setTypeLine(node.get("type_line").asText());
 	}
 
@@ -96,79 +96,74 @@ public class CardDeserializer extends StdDeserializer<Card> {
 		card.setComponent(node.get("component").asText());
 		card.setName(node.get("name").asText());
 		card.setTypeLine(node.get("type_line").asText());
-		card.setUri(parseURI(node.get("uri").asText()));
+		card.setUri(parseURI(node, "uri"));
 		return card;
 	}
 
 	private CardFace parseCardFace(JsonNode node) {
 		CardFace face = new CardFace();
-		face.setArtist(new NullableJsonNode<>(String.class).parse(node, "artist"));
-		face.setColor_indicator(new ArrayJsonNode<>(Color.class).parse(node, "color_indicator", n -> Color.from(n.asText())));
-		face.setColors(new ArrayJsonNode<>(Color.class).parse(node, "colors", n -> Color.from(n.asText())));
-		face.setFlavor_text(new NullableJsonNode<>(String.class).parse(node, "flavor_text"));
-		String illustrationId = new NullableJsonNode<>(String.class).parse(node, "illustration_id");
-		face.setIllustration_id(illustrationId == null ? null : UUID.fromString(illustrationId));
-		face.setImage_uris(new ArrayJsonNode<>(URI.class).parse(node, "image_uris", n -> parseURI(n.asText())));
-		face.setLoyalty(new NullableJsonNode<>(String.class).parse(node, "loyalty"));
+		face.setArtist(parseSimpleNode(node, "artist", String.class));
+		face.setColor_indicator(parseArrayNode(node, "color_indicator", Color.class, n -> Color.from(n.asText())));
+		face.setColors(parseArrayNode(node, "colors", Color.class, n -> Color.from(n.asText())));
+		face.setFlavor_text(parseSimpleNode(node, "flavor_text", String.class));
+		face.setIllustration_id(parseUUID(node, "illustration_id"));
+		face.setImage_uris(parseArrayNode(node, "image_uris", URI.class, this::parseURI));
+		face.setLoyalty(parseSimpleNode(node, "loyalty", String.class));
 		face.setMana_cost(node.get("mana_cost").asText());
 		face.setName(node.get("name").asText());
-		face.setOracle_text(new NullableJsonNode<>(String.class).parse(node, "oracle_text"));
-		face.setPower(new NullableJsonNode<>(String.class).parse(node, "power"));
-		face.setPrinted_name(new NullableJsonNode<>(String.class).parse(node, "printed_name"));
-		face.setPrinted_text(new NullableJsonNode<>(String.class).parse(node, "printed_text"));
-		face.setPrinted_type_line(new NullableJsonNode<>(String.class).parse(node, "printed_type_line"));
-		face.setToughness(new NullableJsonNode<>(String.class).parse(node, "toughness"));
+		face.setOracle_text(parseSimpleNode(node, "oracle_text", String.class));
+		face.setPower(parseSimpleNode(node, "power", String.class));
+		face.setPrinted_name(parseSimpleNode(node, "printed_name", String.class));
+		face.setPrinted_text(parseSimpleNode(node, "printed_text", String.class));
+		face.setPrinted_type_line(parseSimpleNode(node, "printed_type_line", String.class));
+		face.setToughness(parseSimpleNode(node, "toughness", String.class));
 		face.setType_line(node.get("type_line").asText());
-		face.setWatermark(new NullableJsonNode<>(String.class).parse(node, "watermark"));
+		face.setWatermark(parseSimpleNode(node, "watermark", String.class));
 		return face;
 	}
 
 	private void parsePrintFields(Card card, JsonNode node) {
-		card.setArtist(new NullableJsonNode<>(String.class).parse(node, "artist"));
+		card.setArtist(parseSimpleNode(node, "artist", String.class));
 		card.setBooster(node.get("booster").asBoolean());
 		card.setBorderColor(node.get("border_color").asText());
 		card.setCardBackId(UUID.fromString(node.get("card_back_id").asText()));
 		card.setCollectorNumber(node.get("collector_number").asText());
-		card.setContentWarning(new NullableJsonNode<>(Boolean.class).parse(node, "content_warning"));
+		card.setContentWarning(parseSimpleNode(node, "content_warning", Boolean.class));
 		card.setDigital(node.get("digital").asBoolean());
-		card.setFlavorName(new NullableJsonNode<>(String.class).parse(node, "flavor_name"));
-		card.setFlavorText(new NullableJsonNode<>(String.class).parse(node, "flavor_text"));
-		card.setFrameEffects(new ArrayJsonNode<>(String.class).parse(node, "frame_effects", JsonNode::textValue));
-		card.setFrame(new NullableJsonNode<>(String.class).parse(node, "frame"));
-		card.setFullArt(new NullableJsonNode<>(Boolean.class).parse(node, "full_art"));
-		card.setGames(new ArrayJsonNode<>(String.class).parse(node, "games", JsonNode::textValue));
+		card.setFlavorName(parseSimpleNode(node, "flavor_name", String.class));
+		card.setFlavorText(parseSimpleNode(node, "flavor_text", String.class));
+		card.setFrameEffects(parseArrayNode(node, "frame_effects", String.class, JsonNode::textValue));
+		card.setFrame(parseSimpleNode(node, "frame", String.class));
+		card.setFullArt(parseSimpleNode(node, "full_art", Boolean.class));
+		card.setGames(parseArrayNode(node, "games", String.class, JsonNode::textValue));
 		card.setHighresImage(node.get("highres_image").asBoolean());
 		card.setIllustrationId(UUID.fromString(node.get("illustration_id").asText()));
-		card.setImageUris(new ArrayJsonNode<>(URI.class).parse(node, "image_uris", n -> parseURI(n.asText())));
+		card.setImageUris(parseArrayNode(node, "image_uris", URI.class, this::parseURI));
 		card.setPrices(parsePrices(node.get("prices")));
-		card.setPrintedName(new NullableJsonNode<>(String.class).parse(node, "printed_name"));
-		card.setPrintedText(new NullableJsonNode<>(String.class).parse(node, "printed_text"));
-		card.setPrintedTypeLine(new NullableJsonNode<>(String.class).parse(node, "printed_type_line"));
+		card.setPrintedName(parseSimpleNode(node, "printed_name", String.class));
+		card.setPrintedText(parseSimpleNode(node, "printed_text", String.class));
+		card.setPrintedTypeLine(parseSimpleNode(node, "printed_type_line", String.class));
 		card.setPromo(node.get("promo").asBoolean());
-		card.setPromoTypes(new ArrayJsonNode<>(String.class).parse(node, "promo_types", JsonNode::textValue));
-		card.setPurchaseUris(new ArrayJsonNode<>(URI.class).parse(node, "purchase_uris", n -> parseURI(n.asText())));
-		card.setRarity(new NullableJsonNode<>(String.class).parse(node, "rarity"));
-		card.setRelatedUris(new ArrayJsonNode<>(URI.class).parse(node, "related_uris", n -> parseURI(n.asText())));
+		card.setPromoTypes(parseArrayNode(node, "promo_types", String.class, JsonNode::textValue));
+		card.setPurchaseUris(parseArrayNode(node, "purchase_uris", URI.class, this::parseURI));
+		card.setRarity(parseSimpleNode(node, "rarity", String.class));
+		card.setRelatedUris(parseArrayNode(node, "related_uris", URI.class, this::parseURI));
 		card.setReleasedAt(LocalDate.parse(node.get("released_at").asText(), formatter));
 		card.setReprint(node.get("reprint").asBoolean());
-		card.setScryfallSetUri(parseURI(node.get("scryfall_set_uri").asText()));
+		card.setScryfallSetUri(parseURI(node, "scryfall_set_uri"));
 		card.setSetName(node.get("set_name").asText());
-		card.setSetSearchUri(parseURI(node.get("set_search_uri").asText()));
+		card.setSetSearchUri(parseURI(node, "set_search_uri"));
 		card.setSetType(node.get("set_type").asText());
-		card.setSetUri(parseURI(node.get("set_uri").asText()));
+		card.setSetUri(parseURI(node, "set_uri"));
 		card.setSet(node.get("set").asText());
 		card.setStorySpotlight(node.get("story_spotlight").asBoolean());
 		card.setTextless(node.get("textless").asBoolean());
 		card.setVariation(node.get("variation").asBoolean());
-		String variationOf = new NullableJsonNode<>(String.class).parse(node, "variation_of");
-		card.setVariationOf(variationOf == null ? null : UUID.fromString(variationOf));
-		card.setWatermark(node.get("watermark").asText());
-
-		String previewAt = new NullableJsonNode<>(String.class).parse(node, "preview.previewed_at");
-		card.setPreviewPreviewedAt(previewAt == null ? null : LocalDate.parse(previewAt, formatter));
-		String previewSourceURI = new NullableJsonNode<>(String.class).parse(node, "preview.source_uri");
-		card.setPreviewSourceURI(previewSourceURI == null ? null : parseURI(previewSourceURI));
-		card.setPreviewSource(new NullableJsonNode<>(String.class).parse(node, "preview.source"));
+		card.setVariationOf(parseUUID(node, "variation_of"));
+		card.setWatermark(parseSimpleNode(node, "watermark", String.class));
+		card.setPreviewPreviewedAt(parseLocalDate(node, "preview.previewed_at", formatter));
+		card.setPreviewSourceURI(parseURI(node, "preview.source_uri"));
+		card.setPreviewSource(parseSimpleNode(node, "preview.source", String.class));
 	}
 
 	private Map<String, Double> parsePrices(JsonNode node) {
@@ -178,13 +173,18 @@ public class CardDeserializer extends StdDeserializer<Card> {
 		return result;
 	}
 
-	private URI parseURI(String value) {
+	private URI parseURI(JsonNode node, String fieldName) {
+		return node.has(fieldName) ? parseURI(node.get(fieldName)) : null;
+	}
+
+	private URI parseURI(JsonNode node) {
 		try {
-			return new URI(value);
+			return new URI(node.asText());
 		} catch (URISyntaxException e) {
 			//log
-			return null;
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 }

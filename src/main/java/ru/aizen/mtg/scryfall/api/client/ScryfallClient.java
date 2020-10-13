@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import ru.aizen.mtg.scryfall.api.client.query.BulkDataQuery;
+import ru.aizen.mtg.scryfall.api.client.query.CardQuery;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkData;
-import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataDeserializer;
+import ru.aizen.mtg.scryfall.api.parser.deserializer.BulkDataDeserializer;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataList;
-import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataListDeserializer;
+import ru.aizen.mtg.scryfall.api.parser.deserializer.BulkDataListDeserializer;
+import ru.aizen.mtg.scryfall.api.domain.card.Card;
+import ru.aizen.mtg.scryfall.api.parser.deserializer.CardDeserializer;
 
 public final class ScryfallClient {
 
@@ -31,6 +34,7 @@ public final class ScryfallClient {
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(BulkDataList.class, new BulkDataListDeserializer());
 		module.addDeserializer(BulkData.class, new BulkDataDeserializer());
+		module.addDeserializer(Card.class, new CardDeserializer());
 
 		mapper.registerModule(module);
 
@@ -45,6 +49,10 @@ public final class ScryfallClient {
 
 	public BulkDataQuery bulkData() {
 		return new BulkDataQuery(this);
+	}
+
+	public CardQuery card() {
+		return new CardQuery(this);
 	}
 
 	public HttpClient getTransportClient() {

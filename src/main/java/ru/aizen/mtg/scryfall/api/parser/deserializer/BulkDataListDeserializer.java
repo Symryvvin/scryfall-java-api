@@ -1,4 +1,4 @@
-package ru.aizen.mtg.scryfall.api.domain.bulk;
+package ru.aizen.mtg.scryfall.api.parser.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import ru.aizen.mtg.scryfall.api.domain.bulk.BulkData;
+import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataList;
 
 import java.io.IOException;
 import java.util.ArrayList;

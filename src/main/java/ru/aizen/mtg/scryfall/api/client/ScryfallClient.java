@@ -10,9 +10,11 @@ import ru.aizen.mtg.scryfall.api.client.query.DirectApiQuery;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkData;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataList;
 import ru.aizen.mtg.scryfall.api.domain.card.Card;
+import ru.aizen.mtg.scryfall.api.domain.card.CardList;
 import ru.aizen.mtg.scryfall.api.parser.deserializer.BulkDataDeserializer;
 import ru.aizen.mtg.scryfall.api.parser.deserializer.BulkDataListDeserializer;
 import ru.aizen.mtg.scryfall.api.parser.deserializer.CardDeserializer;
+import ru.aizen.mtg.scryfall.api.parser.deserializer.CardListDeserializer;
 
 public final class ScryfallClient {
 
@@ -35,6 +37,7 @@ public final class ScryfallClient {
 		SimpleModule module = new SimpleModule();
 		module.addDeserializer(BulkDataList.class, new BulkDataListDeserializer());
 		module.addDeserializer(BulkData.class, new BulkDataDeserializer());
+		module.addDeserializer(CardList.class, new CardListDeserializer());
 		module.addDeserializer(Card.class, new CardDeserializer());
 
 		mapper.registerModule(module);
@@ -49,7 +52,7 @@ public final class ScryfallClient {
 	}
 
 	public <T> DirectApiQuery<T> api(Class<T> type) {
-		return new DirectApiQuery<T>(this, type);
+		return new DirectApiQuery<>(this, type);
 	}
 
 	public BulkDataQuery bulkData() {

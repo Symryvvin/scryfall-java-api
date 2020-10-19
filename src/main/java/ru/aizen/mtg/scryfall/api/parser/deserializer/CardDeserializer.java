@@ -138,7 +138,7 @@ public class CardDeserializer extends StdDeserializer<Card> {
 		card.setFullArt(parseSimpleNode(node, "full_art", Boolean.class));
 		card.setGames(parseArrayNode(node, "games", String.class, JsonNode::textValue));
 		card.setHighresImage(node.get("highres_image").asBoolean());
-		card.setIllustrationId(UUID.fromString(node.get("illustration_id").asText()));
+		card.setIllustrationId(parseUUID(node, "illustration_id"));
 		card.setImageUris(parseArrayNode(node, "image_uris", URI.class, this::parseURI));
 		card.setPrices(parsePrices(node.get("prices")));
 		card.setPrintedName(parseSimpleNode(node, "printed_name", String.class));

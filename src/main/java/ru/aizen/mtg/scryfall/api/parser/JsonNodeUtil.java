@@ -3,6 +3,8 @@ package ru.aizen.mtg.scryfall.api.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Array;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +59,20 @@ public class JsonNodeUtil {
 	public static LocalDateTime parseLocalDateTime(JsonNode node, String fieldName, DateTimeFormatter formatter) {
 		if (node.has(fieldName)) {
 			return LocalDateTime.parse(node.get(fieldName).asText(), formatter);
+		}
+		return null;
+	}
+
+	public static URI parseURI(JsonNode node, String fieldName) {
+		return node.has(fieldName) ? parseURI(node.get(fieldName)) : null;
+	}
+
+	public static URI parseURI(JsonNode node) {
+		try {
+			return new URI(node.asText());
+		} catch (URISyntaxException e) {
+			//log
+			e.printStackTrace();
 		}
 		return null;
 	}

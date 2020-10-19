@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import ru.aizen.mtg.scryfall.api.client.query.BulkDataQuery;
-import ru.aizen.mtg.scryfall.api.client.query.CardQuery;
 import ru.aizen.mtg.scryfall.api.client.query.DirectApiQuery;
+import ru.aizen.mtg.scryfall.api.client.query.card.CardQuery;
+import ru.aizen.mtg.scryfall.api.client.query.card.CardSearchQuery;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkData;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataList;
 import ru.aizen.mtg.scryfall.api.domain.card.Card;
@@ -61,6 +62,10 @@ public final class ScryfallClient {
 
 	public CardQuery card() {
 		return new CardQuery(this);
+	}
+
+	public CardSearchQuery cardSearch() {
+		return new CardSearchQuery(this);
 	}
 
 	public HttpClient getTransportClient() {

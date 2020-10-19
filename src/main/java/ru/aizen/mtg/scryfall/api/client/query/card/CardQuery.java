@@ -1,6 +1,10 @@
-package ru.aizen.mtg.scryfall.api.client.query;
+package ru.aizen.mtg.scryfall.api.client.query.card;
 
 import ru.aizen.mtg.scryfall.api.client.ScryfallClient;
+import ru.aizen.mtg.scryfall.api.client.query.ScryfallQueryBuilder;
+import ru.aizen.mtg.scryfall.api.client.query.ScryfallQueryException;
+import ru.aizen.mtg.scryfall.api.client.query.ScryfallRequest;
+import ru.aizen.mtg.scryfall.api.client.query.ScryfallRequestException;
 import ru.aizen.mtg.scryfall.api.domain.card.Card;
 
 import java.util.UUID;

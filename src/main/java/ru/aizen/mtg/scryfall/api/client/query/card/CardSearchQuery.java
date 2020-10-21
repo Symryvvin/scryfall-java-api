@@ -10,13 +10,14 @@ import ru.aizen.mtg.scryfall.api.domain.card.CardList;
 
 public class CardSearchQuery extends ScryfallQueryBuilder {
 
+	private String query;
 	private CardUnique unique = CardUnique.CARDS;
 	private CardOrder order = CardOrder.NAME;
 	private CardOrderDirection direction = CardOrderDirection.AUTO;
 	private int page = 1;
-	public boolean includeExtras = false;
-	public boolean includeMultilingual = false;
-	public boolean includeVariations = false;
+	private boolean includeExtras = false;
+	private boolean includeMultilingual = false;
+	private boolean includeVariations = false;
 
 	public CardSearchQuery(ScryfallClient client) {
 		super(client);
@@ -25,14 +26,12 @@ public class CardSearchQuery extends ScryfallQueryBuilder {
 	/**
 	 * GET /cards/search
 	 *
-	 * @param query A fulltext search query. Make sure that your parameter is properly encoded.
 	 * @return Returns a List object containing Cards found using a fulltext search string.
 	 * This string supports @see <a href="https://scryfall.com/docs/syntax">fulltext search system</a> that the main site uses.
 	 *
 	 * This method is paginated, returning 175 cards at a time.
 	 */
-	public CardList searchByQuery(String query) throws ScryfallQueryException, ScryfallRequestException {
-
+	public CardList execute() throws ScryfallQueryException, ScryfallRequestException {
 		ScryfallRequest<CardList> request = new ScryfallRequest<>(
 				getClient(),
 				method("/cards/search",
@@ -47,6 +46,11 @@ public class CardSearchQuery extends ScryfallQueryBuilder {
 				),
 				CardList.class);
 		return request.execute();
+	}
+
+	public CardSearchQuery query(String query) throws ScryfallQueryException, ScryfallRequestException {
+		this.query = query;
+		return this;
 	}
 
 	public CardSearchQuery sorted(CardOrder order) {

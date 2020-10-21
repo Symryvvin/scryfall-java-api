@@ -27,17 +27,17 @@ class CardQueryTest {
 		ScryfallClient scryfall = ScryfallClient.createDefault();
 
 		CardList cardList = scryfall.cardSearch()
-		.page(3)
-		.sorted(CardOrder.CMC, CardOrderDirection.ASCENDING)
-		.searchByQuery("game=paper");
+				.query("game=paper")
+				.page(3)
+				.sorted(CardOrder.CMC, CardOrderDirection.ASCENDING)
+				.execute();
 		List<Card> cards = new ArrayList<>(cardList.getData());
 
 		while (cardList.isHasMore()) {
-			cardList = scryfall.api( CardList.class).query(cardList.getNextPage());
+			cardList = scryfall.query(cardList.getNextPage(), CardList.class).execute();
 			cards.addAll(cardList.getData());
 			System.out.println(cards.size());
 		}
-
 
 
 	}

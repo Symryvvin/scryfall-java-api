@@ -17,6 +17,8 @@ import ru.aizen.mtg.scryfall.api.parser.deserializer.BulkDataListDeserializer;
 import ru.aizen.mtg.scryfall.api.parser.deserializer.CardDeserializer;
 import ru.aizen.mtg.scryfall.api.parser.deserializer.CardListDeserializer;
 
+import java.net.URI;
+
 public final class ScryfallClient {
 
 	private final String scheme;
@@ -52,8 +54,8 @@ public final class ScryfallClient {
 		return new Builder();
 	}
 
-	public <T> DirectApiQuery<T> api(Class<T> type) {
-		return new DirectApiQuery<>(this, type);
+	public <T> DirectApiQuery<T> query(URI uri, Class<T> type) {
+		return new DirectApiQuery<>(this, uri, type);
 	}
 
 	public BulkDataQuery bulkData() {

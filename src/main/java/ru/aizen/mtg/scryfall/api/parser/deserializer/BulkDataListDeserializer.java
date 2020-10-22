@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkData;
 import ru.aizen.mtg.scryfall.api.domain.bulk.BulkDataList;
 
@@ -13,22 +12,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BulkDataListDeserializer extends StdDeserializer<BulkDataList> {
-
-	public BulkDataListDeserializer() {
-		this(null);
-	}
-
-	protected BulkDataListDeserializer(Class<?> vc) {
-		super(vc);
-	}
+public class BulkDataListDeserializer extends JsonDeserializer<BulkDataList> {
 
 	@Override
 	public BulkDataList deserialize(JsonParser jsonParser, DeserializationContext context)
 			throws IOException {
 		ObjectCodec codec = jsonParser.getCodec();
 		JsonNode node = codec.readTree(jsonParser);
-		JsonDeserializer<Object> dataDeserializer = context.findNonContextualValueDeserializer(context.constructType(BulkData.class));
+
+		JsonDeserializer<?> dataDeserializer = DeserializerFactory.getDeserializer(BulkData.class);
 
 		JsonNode dataNodes = node.get("data");
 		List<BulkData> data = new ArrayList<>();

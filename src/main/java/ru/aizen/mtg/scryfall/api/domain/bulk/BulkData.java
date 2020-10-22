@@ -3,6 +3,7 @@ package ru.aizen.mtg.scryfall.api.domain.bulk;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.aizen.mtg.scryfall.api.client.ScryfallObject;
 import ru.aizen.mtg.scryfall.api.client.ScryfallObjectType;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class BulkData implements ScryfallObject {
 
 	private final ScryfallObjectType objectType = ScryfallObjectType.BULK_DATA;

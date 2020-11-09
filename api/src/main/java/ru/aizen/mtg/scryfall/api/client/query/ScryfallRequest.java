@@ -5,12 +5,16 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.aizen.mtg.scryfall.api.client.ScryfallClient;
 
 import java.io.IOException;
 import java.net.URI;
 
 public class ScryfallRequest<T> {
+
+	private static final Logger logger = LoggerFactory.getLogger(ScryfallRequest.class);
 
 	private final ScryfallClient client;
 	private final URI uri;
@@ -33,6 +37,9 @@ public class ScryfallRequest<T> {
 	public String responseEntityAsString() throws ScryfallRequestException {
 		try {
 			HttpGet request = new HttpGet(uri);
+
+			logger.info("Request URL {}", uri);
+
 			HttpResponse response = client.getTransportClient().execute(request);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != 200) {

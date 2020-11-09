@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
     <version>0.1.0</version>
     <modules>
-        <module>examples</module>
         <module>api</module>
+        <module>examples/card-text-search</module>
     </modules>
 
 

@@ -6,10 +6,20 @@
         <artifactId>scryfall-java-api</artifactId>
         <groupId>org.example</groupId>
         <version>0.1.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>examples</artifactId>
+    <groupId>ru.aizen</groupId>
+    <artifactId>card-text-search</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>api</artifactId>
+            <version>0.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>

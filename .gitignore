@@ -14,6 +14,6 @@
 *.rar
 
 # Idea
-/target
-/.idea
+target
+.idea
 *.iml
